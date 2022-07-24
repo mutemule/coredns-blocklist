@@ -41,7 +41,7 @@ func (b Blocklist) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Ms
 
 	if b.shouldBlock(state.Name()) {
 		resp := new(dns.Msg)
-		resp.SetRcode(r, dns.RcodeNameError)
+		resp.SetRcode(r, dns.RcodeRefused)
 		err := w.WriteMsg(resp)
 
 		if err != nil {
@@ -61,7 +61,7 @@ func (b Blocklist) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Ms
 			state.RemoteAddr(),
 		)
 
-		return dns.RcodeNameError, nil
+		return dns.RcodeRefused, nil
 	}
 
 	return plugin.NextOrFailure(b.Name(), b.Next, ctx, w, r)
