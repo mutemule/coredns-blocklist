@@ -59,7 +59,7 @@ func (b Blocklist) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Ms
 		} else {
 			// Handle the blocking of the RR
 			resp := new(dns.Msg)
-			resp.SetRcode(r, dns.RcodeNameError)
+			resp.SetRcode(r, dns.RcodeRefused)
 			err := w.WriteMsg(resp)
 
 			if err != nil {
@@ -79,7 +79,7 @@ func (b Blocklist) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Ms
 				state.RemoteAddr(),
 			)
 
-			return dns.RcodeNameError, nil
+			return dns.RcodeRefused, nil
 		}
 	}
 
