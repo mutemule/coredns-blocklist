@@ -38,7 +38,7 @@ Add the following to the plugin.cfg file in your clone of coredns and follow
 the instructions from coredns.
 
 ```
-blocklist:github.com/relekang/coredns-blocklist
+blocklist:github.com/mutemule/coredns-blocklist
 ```
 
 ### Using a go file to compile the bundle
@@ -51,4 +51,4 @@ The example is bundled up with releases of on the [release page][] of this
 repository. There it can be downloaded prebuilt for a bunch of environments.
 
 [coredns]: https://coredns.io
-[release page]: https://github.com/relekang/coredns-blocklist/releases
+[release page]: https://github.com/mutemule/coredns-blocklist/releases
