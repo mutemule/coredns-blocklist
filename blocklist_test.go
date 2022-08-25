@@ -35,7 +35,7 @@ func TestExample(t *testing.T) {
 	assert.Equal(t, dns.RcodeSuccess, rec.Rcode)
 }
 
-func TestAllowedDomain(t *testing.T) {
+func TestUnlistedDomain(t *testing.T) {
 	x := Blocklist{Next: NextHandler(), blockDomains: map[string]bool{"bad.domain.": true}}
 
 	b := &bytes.Buffer{}
