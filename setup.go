@@ -25,7 +25,6 @@ func setup(c *caddy.Controller) error {
 			switch option {
 			case "domain_metrics":
 				domainMetrics = true
-				break
 			default:
 				return plugin.Error("blocklist", c.Errf("unexpected '%v' command", option))
 			}
