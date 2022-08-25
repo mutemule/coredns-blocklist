@@ -26,6 +26,30 @@ func TestSetupInvalidConfig(t *testing.T) {
 	)
 }
 
+func TestSetupAllowlistWithNoLocation(t *testing.T) {
+	cfg := `blocklist https://mirror1.malwaredomains.com/files/justdomains {
+            allowlist
+          }`
+	c := caddy.NewTestController("dns", cfg)
+
+	err := setup(c)
+	assert.EqualError(
+		t,
+		err,
+		"plugin/blocklist: allowlist requires a single argument.",
+	)
+}
+
+func TestSetupValidConfigWithAllowlist(t *testing.T) {
+	cfg := `blocklist https://mirror1.malwaredomains.com/files/justdomains {
+            allowlist example/allowlist.txt
+          }`
+	c := caddy.NewTestController("dns", cfg)
+
+	err := setup(c)
+	assert.NoError(t, err)
+}
+
 func TestSetupValidConfig(t *testing.T) {
 	c := caddy.NewTestController("dns", `blocklist example/blocklist.txt`)
 	err := setup(c)

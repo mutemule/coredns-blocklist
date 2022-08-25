@@ -14,6 +14,8 @@ func setup(c *caddy.Controller) error {
 	for c.Next() {
 		domainMetrics := false
 		var blocklistLocation string
+		var allowlistLocation string
+		var allowlist []string
 		c.Args(&blocklistLocation)
 
 		if blocklistLocation == "" {
@@ -23,6 +25,14 @@ func setup(c *caddy.Controller) error {
 		for c.NextBlock() {
 			option := c.Val()
 			switch option {
+			case "allowlist":
+				remaining := c.RemainingArgs()
+				if len(remaining) != 1 {
+					return plugin.Error("blocklist", errors.New("allowlist requires a single argument."))
+				}
+
+				allowlistLocation = remaining[0]
+				log.Debugf("Setting allowlist location to %s", allowlistLocation)
 			case "domain_metrics":
 				domainMetrics = true
 			default:
@@ -39,9 +49,16 @@ func setup(c *caddy.Controller) error {
 			return plugin.Error("blocklist", err)
 		}
 
+		if allowlistLocation != "" {
+			allowlist, err = loadList(c, allowlistLocation)
+			if err != nil {
+				return plugin.Error("blocklist", err)
+			}
+		}
+
 		dnsserver.GetConfig(c).
 			AddPlugin(func(next plugin.Handler) plugin.Handler {
-				return NewBlocklistPlugin(next, blocklist, domainMetrics)
+				return NewBlocklistPlugin(next, blocklist, allowlist, domainMetrics)
 			})
 	}
 

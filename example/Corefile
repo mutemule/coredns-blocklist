@@ -5,6 +5,7 @@
 
   blocklist https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
   blocklist blocklist.txt {
+    allowlist allowlist.txt
     domain_metrics
   }
 
