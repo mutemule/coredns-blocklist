@@ -13,10 +13,10 @@ func init() { plugin.Register("blocklist", setup) }
 func setup(c *caddy.Controller) error {
 	for c.Next() {
 		domainMetrics := false
-		var name string
-		c.Args(&name)
+		var blocklistLocation string
+		c.Args(&blocklistLocation)
 
-		if name == "" {
+		if blocklistLocation == "" {
 			return plugin.Error("blocklist", errors.New("Missing url or path to blocklist."))
 		}
 
@@ -36,15 +36,14 @@ func setup(c *caddy.Controller) error {
 			return plugin.Error("blocklist", errors.New("To many arguments for blocklist."))
 		}
 
-		loaded, err := loadBlockList(c, name)
-
+		blocklist, err := loadList(c, blocklistLocation)
 		if err != nil {
 			return plugin.Error("blocklist", err)
 		}
 
 		dnsserver.GetConfig(c).
 			AddPlugin(func(next plugin.Handler) plugin.Handler {
-				return NewBlocklistPlugin(next, loaded, domainMetrics)
+				return NewBlocklistPlugin(next, blocklist, domainMetrics)
 			})
 	}
 
