@@ -21,14 +21,13 @@ func setup(c *caddy.Controller) error {
 		}
 
 		for c.NextBlock() {
-			name := c.Val()
-			switch name {
+			option := c.Val()
+			switch option {
 			case "domain_metrics":
 				domainMetrics = true
 				break
-
 			default:
-				return plugin.Error("blocklist", c.Errf("unexpected '%v' command", name))
+				return plugin.Error("blocklist", c.Errf("unexpected '%v' command", option))
 			}
 		}
 
