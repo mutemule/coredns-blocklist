@@ -16,21 +16,21 @@ import (
 var log = clog.NewWithPlugin("blocklist")
 
 type Blocklist struct {
-	domains       map[string]bool
+	blockDomains  map[string]bool
 	Next          plugin.Handler
 	domainMetrics bool
 }
 
-func NewBlocklistPlugin(next plugin.Handler, domains []string, domainMetrics bool) Blocklist {
+func NewBlocklistPlugin(next plugin.Handler, blockDomains []string, domainMetrics bool) Blocklist {
 
 	log.Debugf(
-		"Creating blocklist plugin with %d domains and domain metrics set to %v",
-		len(domains),
+		"Creating blocklist plugin with %d blocks and domain metrics set to %v",
+		len(blockDomains),
 		domainMetrics,
 	)
 
 	return Blocklist{
-		domains:       toMap(domains),
+		blockDomains:  toMap(blockDomains),
 		Next:          next,
 		domainMetrics: domainMetrics,
 	}
@@ -67,13 +67,19 @@ func (b Blocklist) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Ms
 	return plugin.NextOrFailure(b.Name(), b.Next, ctx, w, r)
 }
 
-func (b Blocklist) shouldBlock(name string) bool {
+func (b Blocklist) shouldBlock(name string) (isBlocked bool) {
 	log.Debugf("shouldBlock(%s)", name)
 	if name == "localhost." {
 		return false
 	}
 
-	inBlocklist := false
+	isBlocked = inList(name, b.blockDomains)
+
+	return isBlocked
+}
+
+func inList(name string, domainList map[string]bool) bool {
+	inList := false
 
 	nameParts := strings.Split(name, ".")
 	for i := range nameParts {
@@ -86,12 +92,12 @@ func (b Blocklist) shouldBlock(name string) bool {
 			n = "."
 		}
 
-		if _, inBlocklist = b.domains[n]; inBlocklist {
+		if _, inList = domainList[n]; inList {
 			break
 		}
 	}
 
-	return inBlocklist
+	return inList
 }
 
 func (b Blocklist) Name() string { return "blocklist" }

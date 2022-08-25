@@ -36,7 +36,7 @@ func TestExample(t *testing.T) {
 }
 
 func TestAllowedDomain(t *testing.T) {
-	x := Blocklist{Next: NextHandler(), domains: map[string]bool{"bad.domain.": true}}
+	x := Blocklist{Next: NextHandler(), blockDomains: map[string]bool{"bad.domain.": true}}
 
 	b := &bytes.Buffer{}
 	golog.SetOutput(b)
@@ -53,7 +53,7 @@ func TestAllowedDomain(t *testing.T) {
 }
 
 func TestBlockedDomain(t *testing.T) {
-	x := Blocklist{Next: NextHandler(), domains: map[string]bool{"bad.domain.": true}}
+	x := Blocklist{Next: NextHandler(), blockDomains: map[string]bool{"bad.domain.": true}}
 
 	b := &bytes.Buffer{}
 	golog.SetOutput(b)
@@ -70,7 +70,7 @@ func TestBlockedDomain(t *testing.T) {
 }
 
 func TestBlockedParentDomain(t *testing.T) {
-	x := Blocklist{Next: NextHandler(), domains: map[string]bool{"bad.domain.": true}}
+	x := Blocklist{Next: NextHandler(), blockDomains: map[string]bool{"bad.domain.": true}}
 
 	b := &bytes.Buffer{}
 	golog.SetOutput(b)
@@ -87,7 +87,7 @@ func TestBlockedParentDomain(t *testing.T) {
 }
 
 func TestBlockedChildDomain(t *testing.T) {
-	x := Blocklist{Next: NextHandler(), domains: map[string]bool{"child.bad.domain.": true}}
+	x := Blocklist{Next: NextHandler(), blockDomains: map[string]bool{"child.bad.domain.": true}}
 
 	b := &bytes.Buffer{}
 	golog.SetOutput(b)
@@ -104,7 +104,7 @@ func TestBlockedChildDomain(t *testing.T) {
 }
 
 func TestBlockedRoot(t *testing.T) {
-	x := Blocklist{Next: NextHandler(), domains: map[string]bool{".": true}}
+	x := Blocklist{Next: NextHandler(), blockDomains: map[string]bool{".": true}}
 
 	b := &bytes.Buffer{}
 	golog.SetOutput(b)
