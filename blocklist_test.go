@@ -66,7 +66,7 @@ func TestBlockedDomain(t *testing.T) {
 
 	x.ServeDNS(ctx, rec, r)
 
-	assert.Equal(t, dns.RcodeNameError, rec.Rcode)
+	assert.Equal(t, dns.RcodeRefused, rec.Rcode)
 }
 
 func TestBlockedParentDomain(t *testing.T) {
@@ -83,7 +83,7 @@ func TestBlockedParentDomain(t *testing.T) {
 
 	x.ServeDNS(ctx, rec, r)
 
-	assert.Equal(t, dns.RcodeNameError, rec.Rcode)
+	assert.Equal(t, dns.RcodeRefused, rec.Rcode)
 }
 
 func TestBlockedChildDomain(t *testing.T) {
@@ -117,7 +117,7 @@ func TestBlockedRoot(t *testing.T) {
 
 	x.ServeDNS(ctx, rec, r)
 
-	assert.Equal(t, dns.RcodeNameError, rec.Rcode)
+	assert.Equal(t, dns.RcodeRefused, rec.Rcode)
 }
 
 func TestAllowedDomainWithBlockedParentDomain(t *testing.T) {
@@ -187,7 +187,7 @@ func TestBlockedDomainWithDomainMetrics(t *testing.T) {
 
 	x.ServeDNS(ctx, rec, r)
 
-	assert.Equal(t, dns.RcodeNameError, rec.Rcode)
+	assert.Equal(t, dns.RcodeRefused, rec.Rcode)
 }
 
 func TestBlockedLocalhostStillAllowed(t *testing.T) {
