@@ -1,4 +1,4 @@
-module github.com/mutemule/coredns-blocklist
+module github.com/mutemule/coredns-blocklist/v2
 
 go 1.20
 
