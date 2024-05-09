@@ -20,6 +20,7 @@ type Blocklist struct {
 	allowDomains  map[string]bool
 	Next          plugin.Handler
 	domainMetrics bool
+	blockResponse string
 }
 
 func NewBlocklistPlugin(next plugin.Handler, blockDomains []string, allowDomains []string, domainMetrics bool) Blocklist {
@@ -29,6 +30,7 @@ func NewBlocklistPlugin(next plugin.Handler, blockDomains []string, allowDomains
 		len(blockDomains),
 		len(allowDomains),
 		domainMetrics,
+		blockResponse,
 	)
 
 	return Blocklist{
@@ -36,6 +38,18 @@ func NewBlocklistPlugin(next plugin.Handler, blockDomains []string, allowDomains
 		allowDomains:  toMap(allowDomains),
 		Next:          next,
 		domainMetrics: domainMetrics,
+		blockResponse: NewBlockResponse(blockResponse),
+	}
+}
+
+func NewBlockResponse(blockResponse string) (int, error) {
+	switch blockResponse {
+	case "", "nxdomain":
+		return dns.RcodeNameError
+	case "refused":
+		return dns.RcodeRefused
+	default:
+		log.Errorf("unknown response code '%s', using NXDOMAIN", blockResponse)
 	}
 }
 
@@ -59,7 +73,7 @@ func (b Blocklist) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Ms
 		} else {
 			// Handle the blocking of the RR
 			resp := new(dns.Msg)
-			resp.SetRcode(r, dns.RcodeRefused)
+			resp.SetRcode(r, b.blockResponse)
 			err := w.WriteMsg(resp)
 
 			if err != nil {
@@ -79,7 +93,7 @@ func (b Blocklist) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Ms
 				state.RemoteAddr(),
 			)
 
-			return dns.RcodeRefused, nil
+			return b.blockResponse, nil
 		}
 	}
 
