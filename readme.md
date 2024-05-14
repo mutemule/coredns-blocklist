@@ -1,3 +1,13 @@
+# Deprecated
+
+With the recent upstream change to [support specifying the response code in the
+configuration](https://github.com/relekang/coredns-blocklist/pull/58), there's
+no need for this repository anymore.
+
+Thankfully, because maintaing this as a fork that can be build via plugin.cfg
+is a huge pain. This repository will be removed shortly after a new upstream
+release including the change has been generated.
+
 # coredns-blocklist
 
 This is a [coredns][] plugin to return NXDOMAIN response for any domain
